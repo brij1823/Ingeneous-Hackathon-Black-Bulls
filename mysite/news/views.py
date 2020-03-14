@@ -133,6 +133,19 @@ def result(request):
     first_url = []
     second_url = []
 
+    first_news_source = []
+    second_news_source = []
+
+    first_news_url = []
+    second_news_url = []
+
+    first_news_polarity_one = []
+    first_news_polarity_two = []
+    
+    second_news_polarity_one = []
+    second_news_polarity_two = []
+
+
     database_data = News.objects.all()
 
     news_sources = []
@@ -145,30 +158,55 @@ def result(request):
             first.append(j)
             first_author.append(author[counter])
             first_url.append(img_url[counter])
+            first_news_url.append(all_url[counter])
+            first_news_source.append(source[counter]['name'])
             if(source[counter]["name"] not in news_sources):
                 news  = News()
                 news.news_source = source[counter]["name"]
                 news.cluster_1+=1
                 news.save()
             else:
-                News.objects.filter(news_source=source[counter]["name"]).update(cluster_1+=1)
+                temp = News.objects.get(news_source = source[counter]["name"])
+                temp.cluster_1 = temp.cluster_1+1
+                temp.save()
         elif (i == 1):
             second.append(j)
             second_author.append(author[counter])
             second_url.append(img_url[counter])
+            second_news_url.append(all_url[counter])
+            second_news_source.append(source[counter]["name"])
             if(source[counter]["name"] not in news_sources):
                 news  = News()
                 news.news_source = source[counter]["name"]
                 news.cluster_2+=1
                 news.save()
             else:
-                News.objects.filter(news_source = source[counter]["name"]).update(cluster_2+=1)
+                temp = News.objects.get(news_source = source[counter]["name"])
+                temp.cluster_2 = temp.cluster_2+1
+                temp.save()
+        database_data = News.objects.all()
+        for i in database_data.values('news_source'):
+            #print(i['news_source'])
+            news_sources.append(i['news_source'])
+    
 
         counter+=1
     
     length1 = len(first)
 
+    counter = 0
+    for i,j in zip(results,title):
+        if(i==0):
+            temp = News.objects.get(news_source = source[counter]["name"])
+            first_news_polarity_one.append(temp.cluster_1)
+            first_news_polarity_two.append(temp.cluster_2)
+        else:
+            temp = News.objects.get(news_source = source[counter]["name"])
+            second_news_polarity_one.append(temp.cluster_1)
+            second_news_polarity_two.append(temp.cluster_2)
+        counter+=1
 
-    rowsone = zip(first,first_author,first_url)
-    rowstwo = zip(second,second_author,second_url)
+
+    rowsone = zip(first,first_author,first_url,first_news_source,first_news_url,first_news_polarity_one,first_news_polarity_two)
+    rowstwo = zip(second,second_author,second_url,second_news_source,second_news_url,second_news_polarity_one,second_news_polarity_two)
     return render(request,'result.html',{"headline":headline,"first":first,"second":second,"rowsone":rowsone,"rowstwo":rowstwo})

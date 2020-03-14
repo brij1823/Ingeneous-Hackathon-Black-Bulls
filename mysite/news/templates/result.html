@@ -63,17 +63,42 @@
   height: 400px;
   background-color: #F7F3FF;
 }
+.collapse-content .fa.fa-heart:hover {
+  color: #f44336 !important;
+}
+.collapse-content .fa.fa-share-alt:hover {
+  color: #0d47a1 !important;
+}
+
+.card {
+  /* Add shadows to create the "card" effect */
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+}
+
+/* On mouse-over, add a deeper shadow */
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+/* Add some padding inside the card container */
+.container {
+  padding: 2px 16px;
+}
     </style>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 
 </head>
 <body>
-<!------ Include the above in your HEAD tag ---------->
-
+    
 <div class="container-fluid">
     <div class="row">
         <div class="col-xs-12">
@@ -82,16 +107,30 @@
     <!-- row requires "row-divided" class -->
     <div class="row row-divided" style="text-align: center;">
         <div class="col-xs-6 column-one">
-            <h2>Column 1</h2>
-            {% for i in first %}
-            <p>{{i}}</p>
+            <h2>Cluster 1</h2>
+            {% for row in rowsone %}
+            <div class="card">
+                <img src={{row.2}} alt="Avatar" style="width:100%">
+                <div class="container">     
+                  <h4 style="text-align: center;margin-right: 475px;"><b>{{row.1}}</b></h4>
+                  <p style="text-align: center;margin-right: 475px;">{{row.0}}</p>
+                </div>
+              </div>
+              <br>
             {% endfor %}
         </div>
     	<div class="col-xs-6 column-two">
-            <h2>Column 2</h2>
-            {% for i in second %}
-            <p>{{i}}</p>
-            {% endfor %}  
+            <h2>Cluster 2</h2>
+            {% for i,j,k in rowstwo %}
+            <div class="card">
+                <img src={{k}} alt="Avatar" style="width:100%">
+                <div class="container">     
+                  <h4 style="text-align: center;margin-right: 475px;"><b>{{j}}</b></h4>
+                  <p style="text-align: center;margin-right: 475px;">{{i}}</p>
+                </div>
+              </div>
+              <br>
+            {% endfor %}
     	</div>
     </div>
 </div>

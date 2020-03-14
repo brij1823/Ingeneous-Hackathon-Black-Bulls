@@ -31,6 +31,8 @@ from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 import string
+
+from .models import News
 def index(request):
     return render(request,'index.html')
 
@@ -66,6 +68,7 @@ def result(request):
     source = []
     description = []
     all_url = []
+    img_url = []
     counter=0
     for i in news_dict['articles']:
         print(counter)
@@ -76,6 +79,7 @@ def result(request):
             source.append(i['source'])
             description.append(i['description'])
             all_url.append(i['url'])
+            img_url.append(i['urlToImage'])
             r1 = requests.get(i['url'])
             text = r1.content
             soup = BeautifulSoup(text, 'html.parser')
@@ -121,11 +125,50 @@ def result(request):
     
     first = []
     second = []
+    counter = 0
+
+    first_author = []
+    second_author = []
+
+    first_url = []
+    second_url = []
+
+    database_data = News.objects.all()
+
+    news_sources = []
+    for i in database_data.values('news_source'):
+        #print(i['news_source'])
+        news_sources.append(i['news_source'])
     
     for i,j in zip(results, title):
         if(i == 0):
             first.append(j)
+            first_author.append(author[counter])
+            first_url.append(img_url[counter])
+            if(source[counter]["name"] not in news_sources):
+                news  = News()
+                news.news_source = source[counter]["name"]
+                news.cluster_1+=1
+                news.save()
+            else:
+                News.objects.filter(news_source=source[counter]["name"]).update(cluster_1+=1)
         elif (i == 1):
             second.append(j)
+            second_author.append(author[counter])
+            second_url.append(img_url[counter])
+            if(source[counter]["name"] not in news_sources):
+                news  = News()
+                news.news_source = source[counter]["name"]
+                news.cluster_2+=1
+                news.save()
+            else:
+                News.objects.filter(news_source = source[counter]["name"]).update(cluster_2+=1)
 
-    return render(request,'result.html',{"headline":headline,"first":first,"second":second})
+        counter+=1
+    
+    length1 = len(first)
+
+
+    rowsone = zip(first,first_author,first_url)
+    rowstwo = zip(second,second_author,second_url)
+    return render(request,'result.html',{"headline":headline,"first":first,"second":second,"rowsone":rowsone,"rowstwo":rowstwo})

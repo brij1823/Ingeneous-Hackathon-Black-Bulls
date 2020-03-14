@@ -1,5 +1,11 @@
 from django.shortcuts import render
-
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+import os
+import json
+from newspaper import Article
 # Create your views here.
 
 def index(request):
@@ -28,18 +34,18 @@ def result(request):
     description = []
     all_url = []
     for i in range(length):
-    author.append(news_dict['articles'][i]['author'])
-    title.append(news_dict['articles'][i]['title'])
-    source.append(news_dict['articles'][i]['source'])
-    description.append(news_dict['articles'][i]['description'])
-    all_url.append(news_dict['articles'][i]['url'])
-    r1 = requests.get(news_dict['articles'][i]['url'])
-    text = r1.content
-    soup = BeautifulSoup(text, 'html.parser')
-    paragraph_list = soup.find_all('p')
-    whole_content = ""
-    for item in range(len(paragraph_list)):
-        whole_content = whole_content + " " + paragraph_list[item].get_text()
-    
-    content.append(whole_content)
-    return render(request,'result.html',{"headline":headline,""})
+        author.append(news_dict['articles'][i]['author'])
+        title.append(news_dict['articles'][i]['title'])
+        source.append(news_dict['articles'][i]['source'])
+        description.append(news_dict['articles'][i]['description'])
+        all_url.append(news_dict['articles'][i]['url'])
+        r1 = requests.get(news_dict['articles'][i]['url'])
+        text = r1.content
+        soup = BeautifulSoup(text, 'html.parser')
+        paragraph_list = soup.find_all('p')
+        whole_content = ""
+        for item in range(len(paragraph_list)):
+            whole_content = whole_content + " " + paragraph_list[item].get_text()
+        
+        content.append(whole_content)
+    return render(request,'result.html',{"headline":headline,"headlines": title})
